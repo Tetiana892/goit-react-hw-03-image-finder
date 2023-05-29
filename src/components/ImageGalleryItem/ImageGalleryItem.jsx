@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import { Item, ItemImage } from './ImageGalleryItem.styled';
 
-export default function ImageGalleryItem ({ previewImage, alt, onClickImage })  {
+export default function ImageGalleryItem ({ previewImage, tags, selectedImage  })  {
     return (
         <Item>
-            <ItemImage src="{ previewImage}" alt="{alt}" onClick={onClickImage } />
+            <ItemImage src={ previewImage} alt={tags} onClick={selectedImage } />
 </Item>
     )
 }
 
 ImageGalleryItem.protoType = {
-    webformatURL: PropTypes.string.isRequired,
-    tags: PropTypes.string.isRequired,
-    onClickImage: PropTypes.any.isRequired,
+   tags: PropTypes.string.isRequired,
+  previewImg: PropTypes.string.isRequired,
+  selectedImage: PropTypes.func,
 };

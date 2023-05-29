@@ -13,8 +13,7 @@ export default class Searchbar extends Component{
     formSubmite = e => {
         e.preventDefault();
         if (this.state.searchQuery.trim() === '') {
-            // alert('Ваш запит не коректний');
-      this.props.value();
+      alert ('Please enter something');
       return;
         }
         this.props.onSubmit(this.state.searchQuery);
@@ -41,4 +40,4 @@ export default class Searchbar extends Component{
 </SearchbarHeader>
         )
     }
-}
+};

@@ -2,22 +2,21 @@ import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import PropTypes from 'prop-types';
 import { List } from './ImageGallery.styled';
 
-export default function ImageGallery({ images, toggleModal }) {
+export default function ImageGallery({ images, selectedImage }) {
     return (
         <List>
             {images.map(({ id, tags, webformatURL, largeImageURL }) => (
                 <ImageGalleryItem
-                key={id}
-                alt={tags}
-                 previewImage={webformatURL}
-                onClickImage={() => {
-                    toggleModal(largeImageURL)
-                }}
+                    key={id}
+                    tag={tags}
+                    previewImage={webformatURL}
+                        selectedImage = {() => selectedImage(largeImageURL, tags)}
+                
             />
             ))}
             
-</List>
-    )
+        </List>
+    );
 }
 
 ImageGallery.protoType = {
@@ -29,5 +28,5 @@ ImageGallery.protoType = {
             largeImageURL: PropTypes.string.isRequired,
         })
     ),
-    toggleModal: PropTypes.func.isRequired,
+    selectedImage: PropTypes.func,
 };
