@@ -1,12 +1,13 @@
 import styled from "@emotion/styled";
 
-export const Button = styled.button`
+export const ButtonLoadMore = styled.button`
+ display: inline-block;
 padding: 8px 16px;
   border-radius: 2px;
   background-color: #3f51b5;
   transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
   text-align: center;
-  display: inline-block;
+ 
   color: #fff;
   border: 0;
   text-decoration: none;
@@ -22,4 +23,6 @@ padding: 8px 16px;
 &:hover,
 &:focus {
   background-color: #303f9f;}
-`
+`;
+
+

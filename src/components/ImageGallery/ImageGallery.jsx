@@ -2,7 +2,7 @@ import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import PropTypes from 'prop-types';
 import { List } from './ImageGallery.styled';
 
-export default function ImageGallery({ images, selectedImage }) {
+export default function ImageGallery({ images, toggleModal }) {
     return (
         <List>
             {images.map(({ id, tags, webformatURL, largeImageURL }) => (
@@ -10,7 +10,9 @@ export default function ImageGallery({ images, selectedImage }) {
                     key={id}
                     tag={tags}
                     previewImage={webformatURL}
-                        selectedImage = {() => selectedImage(largeImageURL, tags)}
+                            onClickImage={() => {
+            toggleModal(largeImageURL);
+          }}
                 
             />
             ))}

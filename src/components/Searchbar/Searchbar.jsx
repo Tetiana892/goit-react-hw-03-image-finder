@@ -10,15 +10,21 @@ export default class Searchbar extends Component{
         this.setState({ searchQuery: e.currentTarget.value.toLowerCase().trim() });
     };
 
-    formSubmite = e => {
-        e.preventDefault();
-        if (this.state.searchQuery.trim() === '') {
-      alert ('Please enter something');
+  formSubmite = e => {
+    e.preventDefault();
+    if (this.state.searchQuery.trim() === '') {
+      this.props.value();
       return;
-        }
-        this.props.onSubmit(this.state.searchQuery);
-         this.setState({ searchQuery: '' });
     }
+    this.props.onSubmit(this.state.searchQuery);
+    
+    this.resetInput();
+  };
+
+   resetInput = () => {
+    this.setState({ searchQuery: '' });
+  };
+
 
     render() {
         return (
@@ -30,8 +36,8 @@ export default class Searchbar extends Component{
 
     <SearchFormInput 
       type="text"
-      autocomplete="off"
-      autofocus
+      autoComplete="off"
+      autoFocus
                         placeholder="Search images and photos"
                         value={this.state.searchQuery}
                         onChange={this.onInputChange}
