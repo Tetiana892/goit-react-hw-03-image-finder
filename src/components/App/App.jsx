@@ -1,7 +1,7 @@
 import { Component } from "react";
-import { Container } from './App.styled';
-// import {ToastContainer,  toast } from 'react-toastify';
-// import 'react-toastify/dist/ReactToastify.css';
+import { Container} from './App.styled';
+import ScrollToTop from "react-scroll-to-top";
+
 
 import Searchbar from "../Searchbar/Searchbar";
 import ImageGallery from "../ImageGallery/ImageGallery";
@@ -11,7 +11,6 @@ import Button from "components/Button/Button";
 import Error from "components/Error/Error";
 import scroll from "components/services/scroll";
 import Loader from "components/Loader/Loader";
-
 
 
 export default class App extends Component {
@@ -40,7 +39,6 @@ export default class App extends Component {
     this.setState(prevState => ({
       page: prevState.page + 1,
     }));
-    // console.log(this.state.page);
   };
 
   toggleModal = largeImageURL => {
@@ -81,7 +79,6 @@ export default class App extends Component {
 
     fetchImage(searchQuery, page)
       .then(response => {
-        // console.log(response);
         this.setState(prevState => ({
           images: [...prevState.images, ...response.hits],
           status: 'resolved',
@@ -125,6 +122,15 @@ export default class App extends Component {
         {showModal && (
           <Modal image={modalImage} closeModal={this.toggleModal} />
         )}
+
+        <ScrollToTop smooth width="20" height="20" color="white"
+          style={{
+            borderRadius: 50,
+            backgroundColor: "#5b69ba",
+            fontweight: 500,
+          }}
+    
+        />
       </Container>
     );
   }

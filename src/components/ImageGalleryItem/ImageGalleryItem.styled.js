@@ -9,6 +9,10 @@ border-radius: 2px;
 export const ItemImage = styled.img`
  width: 100%;
   height: 260px;
+  border-radius: 6px;
+  -webkit-box-shadow: 2px 2px 24px -6px rgba(66, 68, 90, 1);
+-moz-box-shadow: 2px 2px 24px -6px rgba(66, 68, 90, 1);
+box-shadow: 2px 2px 24px -6px rgba(66, 68, 90, 1);
   object-fit: cover;
   transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
   &:hover {
