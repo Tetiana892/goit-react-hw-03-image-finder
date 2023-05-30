@@ -8,6 +8,7 @@ import { fetchImage } from '../services/api';
 import Button from "components/Button/Button";
 import Error from "components/Error/Error";
 import scroll from "components/services/scroll";
+import Loader from "components/Loader/Loader";
 
 
 
@@ -24,9 +25,37 @@ export default class App extends Component {
     modalImage: null,
   };
   
-  
+   searchValue = newQuery => {
+     if (newQuery !== this.state.searchQuery) {
+      this.setState({
+        searchQuery: newQuery,
+        page: 1,
+      });
+    }
+  };
 
-  componentDidUpdate(_, prevState) {
+  loadMore = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
+  };
+
+ toggleModal = largeImageURL => {
+    this.setState(({ showModal,}) => ({
+      showModal: !showModal,
+    }));
+   this.setState({ largeImageURL: largeImageURL });
+  };
+
+ errorString = () => {
+    this.setState({
+      images: [],
+      status: 'rejected',
+      error: 'There is no request for an empty tape!',
+    });
+  };
+
+  componentDidUpdate(prevProps, prevState) {
     const prevImages = prevState.searchQuery;
     const prevPage = prevState.page;
 
@@ -69,40 +98,8 @@ export default class App extends Component {
   }
 
 
-  searchValue = newQuery => {
-     if (newQuery !== this.state.searchQuery) {
-      this.setState({
-        searchQuery: newQuery,
-        page: 1,
-      });
-    }
-  };
-
- toggleModal = largeImageURL => {
-    this.setState(({ showModal}) => ({
-      showModal: !showModal,
-      modalImage: largeImageURL,
-    }));
-  };
-
-
-   loadMore = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }));
-  };
-
- errorString = () => {
-    this.setState({
-      images: [],
-      status: 'rejected',
-      error: 'There is no request for an empty tape!',
-    });
-  };
- 
-
     render() {
-      const { images, modalImage, alt, status, showModal, totalHits, error} = this.state;
+      const { images, tags, status, showModal, totalHits, error, largeImageURL} = this.state;
 
       return (
         <Container >
@@ -111,17 +108,19 @@ export default class App extends Component {
            {status !== 'idle' && images.length > 0 && (
           <ImageGallery images={images} toggleModal={this.toggleModal} />
           )}
-          
-        {status === 'resolved' && images.length !== totalHits && (
-          <Button onClick={this.LoadMore} />
-        )}
-          
+
+          {status === 'pending' && <Loader />} 
+           
           {status === 'rejected' && <Error message={error} />}
 
-         {/* {status === 'pending' && <Loader />}  */}
+          {status === 'resolved' && images.length !== totalHits && (
+          <Button onClick={this.LoadMore} />
+        )}
 
           {showModal && (
-            <Modal selectedImage={modalImage} tags={alt} onClose={this.toggleModal } />
+            <Modal  onClose={this.toggleModal}>
+              <img src={largeImageURL} alt={tags} />
+            </Modal>
           )}
           
         </Container>

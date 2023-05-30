@@ -4,34 +4,34 @@ import { Overlay, ModalImage} from './Modal.styled';
 import PropTypes from 'prop-types';
 
 
-const rootModal = document.querySelector('#root-modal');
+const  modalRoot = document.querySelector('#modal-root');
 
 export default class Modal extends Component {
   
   static propTypes = {
-    selectedImage: PropTypes.string,
-    tags: PropTypes.string,
+   onClick: PropTypes.func,
     onClose: PropTypes.func,
+    children: PropTypes.node.isRequired,
   };
 
     componentDidMount() {
-        window.addEventListener('keydown', this.handleEscape);
+        window.addEventListener('keydown', this.handleKeyDown);
     };
 
 
     componentWillUnmount() {
-        window.removeEventListener('keydown', this.handleEscape);
+        window.removeEventListener('keydown', this.handleKeyDown);
     };
 
-    handleEscape = e => {
+    handleKeyDown = e => {
         if (e.code === 'Escape') {
-            this.props.closeModal();
+            this.props.onClose();
         }
     };
 
       handleBackdrop = e => {
     if (e.currentTarget === e.target) {
-      this.props.closeModal();
+      this.props.onClose();
     }
     };
     
@@ -41,7 +41,7 @@ export default class Modal extends Component {
             < Overlay onClick={this.handleBackdrop}>
                 <ModalImage>{this.props.children}</ModalImage> 
             </ Overlay>,
-            rootModal
+            modalRoot,
         );
     }
 }
