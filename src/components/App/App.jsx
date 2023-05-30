@@ -1,7 +1,8 @@
 import { Component } from "react";
 import { Container} from './App.styled';
 import ScrollToTop from "react-scroll-to-top";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Searchbar from "../Searchbar/Searchbar";
 import ImageGallery from "../ImageGallery/ImageGallery";
@@ -41,8 +42,8 @@ export default class App extends Component {
     }));
   };
 
-  toggleModal = largeImageURL => {
-    this.setState(({ showModal}) => ({
+ toggleModal = largeImageURL => {
+    this.setState(({ showModal, modalImage }) => ({
       showModal: !showModal,
       modalImage: largeImageURL,
     }));
@@ -69,8 +70,10 @@ export default class App extends Component {
       });
       if (nextPage === 1) {
         this.setState({ images: [] });
+         
       }
       this.fetchGallery();
+    
     }
   }
 
@@ -88,14 +91,23 @@ export default class App extends Component {
         if (response.hits.length === 0) {
           this.setState({
             status: 'rejected',
-            error: 'Sorry, no images found. Please, try again!',
+             return: toast.error('🦄Sorry, no images found. Please, try again!'),
           });
         }
 
+        if (page === 1) {
+          toast.success(`🦄 Hooray! We found ${response.totalHits} images.`);
+        }
+        const totalPages = Math.ceil(response.totalHits / 12);
+ 
+        if (page === totalPages) {
+          toast.info("🦄 You've reached the end of search results.");
+        }
+        
         scroll();
       })
       .catch(error =>
-        this.setState({ error: error.message, status: 'rejected' })
+        this.setState({ error: error.massage, status: 'rejected'})
       );
   };
 
@@ -120,7 +132,7 @@ export default class App extends Component {
         {status === 'pending' && <Loader />}
 
         {showModal && (
-          <Modal image={modalImage} closeModal={this.toggleModal} />
+          <Modal image={modalImage} onClose={this.toggleModal} />
         )}
 
         <ScrollToTop smooth width="20" height="20" color="white"
@@ -129,8 +141,8 @@ export default class App extends Component {
             backgroundColor: "#5b69ba",
             fontweight: 500,
           }}
-    
         />
+          <ToastContainer theme="colored" position="top-right" autoClose={4000} />
       </Container>
     );
   }
