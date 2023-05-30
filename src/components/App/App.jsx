@@ -1,5 +1,7 @@
 import { Component } from "react";
 import { Container } from './App.styled';
+// import {ToastContainer,  toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
 
 import Searchbar from "../Searchbar/Searchbar";
 import ImageGallery from "../ImageGallery/ImageGallery";
@@ -15,7 +17,7 @@ import Loader from "components/Loader/Loader";
 export default class App extends Component {
  
   state = {
-    searchQuery: '',
+     searchQuery: '',
     page: 1,
     images: [],
     status: 'idle',
@@ -25,8 +27,8 @@ export default class App extends Component {
     modalImage: null,
   };
   
-   searchValue = newQuery => {
-     if (newQuery !== this.state.searchQuery) {
+  searchValue = newQuery => {
+    if (newQuery !== this.state.searchQuery) {
       this.setState({
         searchQuery: newQuery,
         page: 1,
@@ -34,20 +36,21 @@ export default class App extends Component {
     }
   };
 
-  loadMore = () => {
+  LoadMore = () => {
     this.setState(prevState => ({
       page: prevState.page + 1,
     }));
+    // console.log(this.state.page);
   };
 
- toggleModal = largeImageURL => {
-    this.setState(({ showModal,}) => ({
+  toggleModal = largeImageURL => {
+    this.setState(({ showModal}) => ({
       showModal: !showModal,
+      modalImage: largeImageURL,
     }));
-   this.setState({ largeImageURL: largeImageURL });
   };
 
- errorString = () => {
+  errorString = () => {
     this.setState({
       images: [],
       status: 'rejected',
@@ -55,16 +58,17 @@ export default class App extends Component {
     });
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(_, prevState) {
     const prevImages = prevState.searchQuery;
     const prevPage = prevState.page;
 
     const nextImages = this.state.searchQuery;
     const nextPage = this.state.page;
 
-
     if (prevImages !== nextImages || prevPage !== nextPage) {
-      this.setState({ status: 'pending', });
+      this.setState({
+        status: 'pending',
+      });
       if (nextPage === 1) {
         this.setState({ images: [] });
       }
@@ -72,12 +76,12 @@ export default class App extends Component {
     }
   }
 
-  fetchGallery= () => {
+  fetchGallery = () => {
     const { searchQuery, page } = this.state;
 
-     fetchImage(searchQuery, page)
+    fetchImage(searchQuery, page)
       .then(response => {
-     
+        // console.log(response);
         this.setState(prevState => ({
           images: [...prevState.images, ...response.hits],
           status: 'resolved',
@@ -87,45 +91,41 @@ export default class App extends Component {
         if (response.hits.length === 0) {
           this.setState({
             status: 'rejected',
-            error: 'No results were found for your search, please try something else.',
+            error: 'Sorry, no images found. Please, try again!',
           });
         }
-          scroll();
-   })
+
+        scroll();
+      })
       .catch(error =>
         this.setState({ error: error.message, status: 'rejected' })
       );
-  }
+  };
 
+  render() {
+    const { images, status, error, showModal, modalImage, totalHits } =
+      this.state;
 
-    render() {
-      const { images, tags, status, showModal, totalHits, error, largeImageURL} = this.state;
+    return (
+      <Container >
+        <Searchbar onSubmit={this.searchValue} value={this.errorString} />
 
-      return (
-        <Container >
-          <Searchbar onSubmit={this.searchValue} value={this.errorString}/>
-
-           {status !== 'idle' && images.length > 0 && (
+        {status !== 'idle' && images.length > 0 && (
           <ImageGallery images={images} toggleModal={this.toggleModal} />
-          )}
+        )}
 
-          {status === 'pending' && <Loader />} 
-           
-          {status === 'rejected' && <Error message={error} />}
-
-          {status === 'resolved' && images.length !== totalHits && (
+        {status === 'resolved' && images.length !== totalHits && (
           <Button onClick={this.LoadMore} />
         )}
 
-          {showModal && (
-            <Modal  onClose={this.toggleModal}>
-              <img src={largeImageURL} alt={tags} />
-            </Modal>
-          )}
-          
-        </Container>
-      );
-    }
- 
-  };
+        {status === 'rejected' && <Error message={error} />}
 
+        {status === 'pending' && <Loader />}
+
+        {showModal && (
+          <Modal image={modalImage} closeModal={this.toggleModal} />
+        )}
+      </Container>
+    );
+  }
+}
