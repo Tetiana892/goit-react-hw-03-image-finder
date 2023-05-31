@@ -1,20 +1,18 @@
-import { Component } from "react";
-import { Container} from './App.styled';
-import ScrollToTop from "react-scroll-to-top";
+import { Component } from 'react';
+import { Container } from './App.styled';
+import ScrollToTop from 'react-scroll-to-top';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import Searchbar from "../Searchbar/Searchbar";
-import ImageGallery from "../ImageGallery/ImageGallery";
-import Modal  from '../Modal/Modal';
+import Searchbar from '../Searchbar/Searchbar';
+import ImageGallery from '../ImageGallery/ImageGallery';
+import Modal from '../Modal/Modal';
 import { fetchImage } from '../services/api';
-import Button from "components/Button/Button";
-import scroll from "components/services/scroll";
-import Loader from "components/Loader/Loader";
-
+import Button from 'components/Button/Button';
+import scroll from 'components/services/scroll';
+import Loader from 'components/Loader/Loader';
 
 export default class App extends Component {
- 
   state = {
     searchQuery: '',
     page: 1,
@@ -23,7 +21,7 @@ export default class App extends Component {
     totalHits: 0,
     error: '',
     showModal: false,
-    modalImage: null,
+    modalImage: [],
   };
 
   searchValue = newQuery => {
@@ -35,22 +33,21 @@ export default class App extends Component {
     }
   };
 
-  
   LoadMore = () => {
     this.setState(prevState => ({
-    page: prevState.page + 1,
+      page: prevState.page + 1,
     }));
   };
 
- toggleModal = largeImageURL => {
-    this.setState(({ showModal}) => ({
+  toggleModal = largeImageURL => {
+    this.setState(({ showModal }) => ({
       showModal: !showModal,
       modalImage: largeImageURL,
     }));
   };
 
-  errorString = () => {
-    this.setState({
+  errorString = async () => {
+    await this.setState({
       images: [],
       status: 'rejected',
       error: [],
@@ -70,10 +67,8 @@ export default class App extends Component {
       });
       if (nextPage === 1) {
         this.setState({ images: [] });
-         
       }
       this.fetchGallery();
-    
     }
   }
 
@@ -91,35 +86,34 @@ export default class App extends Component {
         if (response.hits.length === 0) {
           this.setState({
             status: 'rejected',
-             return: toast.error('🦄Sorry, no images found. Please, try again!'),
+            return: toast.error('🦄Sorry, no images found. Please, try again!'),
           });
+          return;
         }
 
-        if ( page === 1) {
+        if (page === 1) {
           toast.success(`🦄 Hooray! We found ${response.totalHits} images.`);
         }
 
         const totalPages = Math.ceil(response.totalHits / 12);
- 
+
         if (page === totalPages) {
-          toast.info("🦄 You've reached the end of search results.");   
+          toast.info("🦄 You've reached the end of search results.");
         }
-        
+
         scroll();
       })
-       .catch(error =>
+      .catch(error =>
         this.setState({ error: error.message, status: 'rejected' })
       );
-    
   };
 
   render() {
-
     const { images, status, error, showModal, modalImage, totalHits } =
       this.state;
 
     return (
-      <Container >
+      <Container>
         <Searchbar onSubmit={this.searchValue} value={this.errorString} />
 
         {status !== 'idle' && images.length > 0 && (
@@ -130,22 +124,28 @@ export default class App extends Component {
           <Button onClick={this.LoadMore} />
         )}
 
-        {status === 'rejected' && toast.error(error.message)}
+        {status === 'rejected' && (
+          <h1 style={{ color: 'orangered', textAlign: 'center' }}>
+            {error.message}
+          </h1>
+        )}
 
         {status === 'pending' && <Loader />}
 
-        {showModal && (
-          <Modal image={modalImage} onClose={this.toggleModal} />
-        )}
+        {showModal && <Modal image={modalImage} onClose={this.toggleModal} />}
 
-        <ScrollToTop smooth width="20" height="20" color="white"
+        <ScrollToTop
+          smooth
+          width="20"
+          height="20"
+          color="white"
           style={{
             borderRadius: 50,
-            backgroundColor: "#5b69ba",
+            backgroundColor: '#5b69ba',
             fontweight: 500,
           }}
         />
-          <ToastContainer theme="colored" position="top-right" autoClose={3000} />
+        <ToastContainer theme="colored" position="top-right" autoClose={3000} />
       </Container>
     );
   }
