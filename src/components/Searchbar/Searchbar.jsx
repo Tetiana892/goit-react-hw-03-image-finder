@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { SearchbarHeader,SearchForm, SearchFormButton,SearchFormButtonLabel,SearchFormInput  } from './Searchbar.styled';
+import { toast } from 'react-toastify';
 
 export default class Searchbar extends Component{
     state = {
@@ -14,6 +15,7 @@ export default class Searchbar extends Component{
     e.preventDefault();
     if (this.state.searchQuery.trim() === '') {
       this.props.value();
+       toast.warn('🦄 Please specify your query!');
       return;
     }
     this.props.onSubmit(this.state.searchQuery);

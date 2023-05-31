@@ -9,7 +9,6 @@ import ImageGallery from "../ImageGallery/ImageGallery";
 import Modal  from '../Modal/Modal';
 import { fetchImage } from '../services/api';
 import Button from "components/Button/Button";
-import Error from "components/Error/Error";
 import scroll from "components/services/scroll";
 import Loader from "components/Loader/Loader";
 
@@ -17,7 +16,7 @@ import Loader from "components/Loader/Loader";
 export default class App extends Component {
  
   state = {
-     searchQuery: '',
+    searchQuery: '',
     page: 1,
     images: [],
     status: 'idle',
@@ -26,7 +25,7 @@ export default class App extends Component {
     showModal: false,
     modalImage: null,
   };
-  
+
   searchValue = newQuery => {
     if (newQuery !== this.state.searchQuery) {
       this.setState({
@@ -36,14 +35,15 @@ export default class App extends Component {
     }
   };
 
+  
   LoadMore = () => {
     this.setState(prevState => ({
-      page: prevState.page + 1,
+    page: prevState.page + 1,
     }));
   };
 
  toggleModal = largeImageURL => {
-    this.setState(({ showModal, modalImage }) => ({
+    this.setState(({ showModal}) => ({
       showModal: !showModal,
       modalImage: largeImageURL,
     }));
@@ -53,7 +53,7 @@ export default class App extends Component {
     this.setState({
       images: [],
       status: 'rejected',
-      error: 'There is no request for an empty tape!',
+      error: [],
     });
   };
 
@@ -95,23 +95,26 @@ export default class App extends Component {
           });
         }
 
-        if (page === 1) {
+        if ( page === 1) {
           toast.success(`🦄 Hooray! We found ${response.totalHits} images.`);
         }
+
         const totalPages = Math.ceil(response.totalHits / 12);
  
         if (page === totalPages) {
-          toast.info("🦄 You've reached the end of search results.");
+          toast.info("🦄 You've reached the end of search results.");   
         }
         
         scroll();
       })
-      .catch(error =>
-        this.setState({ error: error.massage, status: 'rejected'})
+       .catch(error =>
+        this.setState({ error: error.message, status: 'rejected' })
       );
+    
   };
 
   render() {
+
     const { images, status, error, showModal, modalImage, totalHits } =
       this.state;
 
@@ -127,7 +130,7 @@ export default class App extends Component {
           <Button onClick={this.LoadMore} />
         )}
 
-        {status === 'rejected' && <Error message={error} />}
+        {status === 'rejected' && toast.error(error.message)}
 
         {status === 'pending' && <Loader />}
 
@@ -142,7 +145,7 @@ export default class App extends Component {
             fontweight: 500,
           }}
         />
-          <ToastContainer theme="colored" position="top-right" autoClose={4000} />
+          <ToastContainer theme="colored" position="top-right" autoClose={3000} />
       </Container>
     );
   }

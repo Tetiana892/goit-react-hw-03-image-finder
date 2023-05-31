@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { createPortal } from 'react-dom';
-import { Overlay, ModalImage} from './Modal.styled';
+import { Overlay, ModalContainer} from './Modal.styled';
 import PropTypes from 'prop-types';
 
 const rootModal = document.querySelector('#root-modal');
@@ -16,24 +16,24 @@ export default class Modal extends Component {
 
   handleEscape = e => {
     if (e.code === 'Escape') {
-      this.props.onclose();
+      this.props.onClose();
     }
   };
 
   handleBackdrop = e => {
     if (e.currentTarget === e.target) {
-      this.props.onclose();
+      this.props.onClose();
     }
   };
 
   render() {
-      const { image } = this.props;
+      const { image, tags } = this.props;
       
     return createPortal(
       <Overlay onClick={this.handleBackdrop}>
-            <ModalImage >
-                 <img src={image.largeImageURL} alt={ image.tags } />
-        </ModalImage>
+            <ModalContainer>
+                 <img src={image} alt={tags } />
+        </ModalContainer>
       </Overlay>
    , rootModal
     );
@@ -42,5 +42,6 @@ export default class Modal extends Component {
 
 Modal.propTypes = {
   image: PropTypes.string.isRequired,
-  onclose: PropTypes.func,
+  onClose: PropTypes.func,
+  tags: PropTypes.string,
 };
